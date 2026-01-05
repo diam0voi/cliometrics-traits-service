@@ -1,0 +1,40 @@
+  {
+    "filename": "data/legacy_db_dump_scenarios.json",
+    "description": "Дамп сценариев симуляции. Показывает, как лидеры используются сейчас (массив INT ID).",
+    "content": [
+      {
+        "scenario_id": 5001,
+        "title": "Operation Barbarossa (Alternate)",
+        "year_start": 1941,
+        "base_difficulty": 0.85,
+        "participating_leader_ids": [
+          1046,
+          1099,
+          1102
+        ],
+        "is_ranked": true
+      },
+      {
+        "scenario_id": 5002,
+        "title": "Pacific Theater 1942",
+        "year_start": 1942,
+        "base_difficulty": 0.9,
+        "participating_leader_ids": [
+          1102,
+          1140
+        ],
+        "is_ranked": true
+      },
+      {
+        "scenario_id": 5005,
+        "title": "Red Revolution 1917",
+        "year_start": 1917,
+        "base_difficulty": 0.7,
+        "participating_leader_ids": [
+          1046,
+          1105
+        ],
+        "is_ranked": false
+      }
+    ]
+  }

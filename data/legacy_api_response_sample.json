@@ -1,0 +1,36 @@
+  {
+    "filename": "logs/legacy_api_response_sample.json",
+    "description": "что сейчас отдает старый API фронтенду. Фронтенд ожидает новые фичи ТАКИМИ ЖЕ1!!",
+    "content": {
+      "endpoint": "GET /api/v1/simulation/5001/context",
+      "timestamp": "2023-10-24T14:00:00Z",
+      "response_body": {
+        "scenario_meta": {
+          "id": 5001,
+          "title": "Operation Barbarossa (Alternate)"
+        },
+        "leaders_snapshot": [
+          {
+            "leader_id": 1046,
+            "display_name": "Joseph Stalin",
+            "stats": {
+              "admin": 8,
+              "dip": 3,
+              "mil": 9
+            },
+            "current_status": "ACTIVE"
+          },
+          {
+            "leader_id": 1099,
+            "display_name": "Winston Churchill",
+            "stats": {
+              "admin": 7,
+              "dip": 9,
+              "mil": 6
+            },
+            "current_status": "ACTIVE"
+          }
+        ]
+      }
+    }
+  }

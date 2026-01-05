@@ -1,0 +1,61 @@
+{
+    "filename": "data/legacy_db_dump_leaders.json",
+    "description": "кто запорит тип данных тому запор",
+    "content": [
+      {
+        "id": 1045,
+        "name": "Napoleon Bonaparte",
+        "country_code": "FRA",
+        "birth_year": 1769,
+        "death_year": 1821,
+        "is_active": true,
+        "internal_slug": "fra_napoleon"
+      },
+      {
+        "id": 1046,
+        "name": "Joseph Stalin",
+        "country_code": "SOV",
+        "birth_year": 1878,
+        "death_year": 1953,
+        "is_active": true,
+        "internal_slug": "sov_stalin"
+      },
+      {
+        "id": 1099,
+        "name": "Winston Churchill",
+        "country_code": "ENG",
+        "birth_year": 1874,
+        "death_year": 1965,
+        "is_active": true,
+        "internal_slug": "eng_churchill"
+      },
+      {
+        "id": 1102,
+        "name": "Franklin D. Roosevelt",
+        "country_code": "USA",
+        "birth_year": 1882,
+        "death_year": 1945,
+        "is_active": true,
+        "internal_slug": "usa_fdr"
+      },
+      {
+        "id": 1105,
+        "name": "Leon Trotsky",
+        "country_code": "SOV",
+        "birth_year": 1879,
+        "death_year": 1940,
+        "is_active": false,
+        "internal_slug": "sov_trotsky"
+      },
+      {
+        "id": 1140,
+        "name": "Hirohito",
+        "country_code": "JPN",
+        "birth_year": 1901,
+        "death_year": 1989,
+        "is_active": true,
+        "internal_slug": "jpn_hirohito"
+      }
+    ]
+  }
+  

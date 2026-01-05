@@ -1,0 +1,54 @@
+  {
+    "filename": "requirements/gamedesign_traits_wishlist.json",
+    "description": "От геймдизайнера.",
+    "content": {
+      "request_id": "GD-2023-10-05",
+      "author": "Alex (Lead Game Designer)",
+      "status": "DRAFT",
+      "requested_traits": [
+        {
+          "trait_name": "Great Purge Survivor",
+          "description": "Increases political stability but lowers army morale.",
+          "effect_modifiers": {
+            "stability": 0.15,
+            "army_org": -0.1
+          },
+          "icon_ref": "icon_purge_skull.png",
+          "applies_to_leaders": [
+            "Joseph Stalin",
+            "sov_trotsky"
+          ],
+          "active_period": {
+            "start": 1936,
+            "end": 1939
+          }
+        },
+        {
+          "trait_name": "Bulldog",
+          "description": "Never surrenders. Defense bonus on core territory.",
+          "effect_modifiers": {
+            "defense_core": 0.25,
+            "surrender_limit": -0.5
+          },
+          "icon_ref": "icon_bulldog.png",
+          "applies_to_leaders": [
+            "Winston Churchill"
+          ],
+          "active_period": "ALWAYS"
+        },
+        {
+          "trait_name": "Island Hopper",
+          "description": "Naval invasion speed bonus.",
+          "effect_modifiers": {
+            "naval_invasion_speed": 0.2
+          },
+          "icon_ref": "icon_ship.png",
+          "applies_to_leaders": [
+            "USA_FDR",
+            "Hirohito"
+          ],
+          "active_period": "ALWAYS"
+        }
+      ]
+    }
+  }
