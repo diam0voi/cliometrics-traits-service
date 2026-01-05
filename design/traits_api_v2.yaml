@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Traits Microservice API
+  version: 1.1.0
+  description: |
+    API микросервиса системы трейтов лидеров. 
+    **Важно:** Согласно архитектурному стандарту, сервис полностью переведен на использование `UUID`. 
+    Поддержка старых целочисленных ID (Legacy INT) на уровне данного API не предусмотрена.
+servers:
+  - url: https://api.cliometrics.internal/v1
+    description: Production server
+
+paths:
+  /traits/{leader_uuid}:
+    get:
+      summary: Получить активные трейты лидера
+      operationId: getLeaderTraits
+      tags:
+        - Traits
+      parameters:
+        - name: leader_uuid
+          in: path
+          required: true
+          description: Уникальный идентификатор лидера в формате UUID
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: year
+          in: query
+          required: false
+          description: Игровой год для фильтрации активных способностей. Если не указан, возвращается полный список.
+          schema:
+            type: integer
+            example: 1942
+      responses:
+        '200':
+          description: Успешное получение списка трейтов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderTraitsResponse'
+        '400':
+          description: Некорректный формат UUID или параметров запроса
+        '404':
+          description: Лидер с указанным UUID не найден
+
+  /traits/bulk:
+    post:
+      summary: Массовое получение трейтов для списка лидеров
+      operationId: getBulkTraits
+      tags:
+        - Traits
+      requestBody:
+        description: Список UUID лидеров и целевой год
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - leader_uuids
+              properties:
+                leader_uuids:
+                  type: array
+                  description: Массив уникальных идентификаторов (UUID)
+                  items:
+                    type: string
+                    format: uuid
+                  example: ["550e8400-e29b-41d4-a716-446655440000", "671e8400-e29b-41d4-a716-446655440001"]
+                year:
+                  type: integer
+                  description: Игровой год для проверки активности трейтов
+                  example: 1942
+      responses:
+        '200':
+          description: Объект с данными, где ключом является UUID лидера
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/LeaderTraitsResponse'
+
+components:
+  schemas:
+    LeaderTraitsResponse:
+      type: object
+      description: Контейнер данных о трейтах конкретного лидера
+      properties:
+        leader_uuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+
+    Trait:
+      type: object
+      required:
+        - name
+        - active
+      properties:
+        name:
+          type: string
+          description: Техническое наименование способности
+          example: "Great Purge Survivor"
+        description:
+          type: string
+          description: Краткое описание эффекта для игрока
+          example: "Increases political stability but lowers army morale."
+        icon_url:
+          type: string
+          format: uri
+          description: Ссылка на графический ассет в CDN
+          example: "https://cdn.internal/icons/icon_purge_skull.png"
+        active:
+          type: boolean
+          description: Флаг активности трейта в указанном году (true/false)
+          example: true
+        effect_modifiers:
+          type: object
+          description: Словарь математических модификаторов для движка симуляции
+          additionalProperties:
+            type: number
+          example:
+            stability: 0.15
+            army_org: -0.1
