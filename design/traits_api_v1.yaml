@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: Traits Microservice API
+  description: API для получения динамических параметров (трейтов) лидеров с учетом временных периодов.
+  version: 1.0.0
+servers:
+  - url: https://api.cliometrics.internal/v1
+    description: Production server
+
+paths:
+  /traits/{leader_id}:
+    get:
+      summary: Получить трейты для одного лидера
+      parameters:
+        - name: leader_id
+          in: path
+          required: true
+          description: Legacy ID лидера (например, 1046)
+          schema:
+            type: integer
+        - name: year
+          in: query
+          required: false
+          description: Игровой год для проверки активности трейтов. Если не указан, возвращаются все трейты.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список трейтов лидера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderTraitsResponse'
+
+  /traits/bulk:
+    post:
+      summary: Массовое получение трейтов для списка лидеров
+      description: Используется POST для передачи большого массива ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                leader_ids:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1046, 1047, 1048]
+                year:
+                  type: integer
+                  description: Игровой год для фильтрации
+                  example: 1942
+      responses:
+        '200':
+          description: Словарь трейтов, где ключ - ID лидера
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/LeaderTraitsResponse'
+
+components:
+  schemas:
+    LeaderTraitsResponse:
+      type: object
+      properties:
+        leader_id:
+          type: integer
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+
+    Trait:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Great Purge Survivor"
+        description:
+          type: string
+          example: "Increases political stability but lowers army morale."
+        icon_url:
+          type: string
+          example: "https://cdn.internal/icons/icon_purge_skull.png"
+        active:
+          type: boolean
+          description: Флаг активности трейта в указанном году
+          example: true
+        effect_modifiers:
+          type: object
+          additionalProperties:
+            type: number
+          example:
+            stability: 0.15
+            army_org: -0.1
