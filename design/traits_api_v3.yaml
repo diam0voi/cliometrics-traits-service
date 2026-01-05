@@ -1,0 +1,119 @@
+openapi: 3.0.3
+info:
+  title: Traits Microservice API
+  version: 1.2.0
+  description: |
+    API системы динамических параметров лидеров. 
+    **Обновления v1.2.0:**
+    - Переход с `year` на `current_date` (format: date) для точности уровня HoI4.
+    - Поле `active` заменено на объект `availability` для информирования фронтенда о причинах блокировки трейта.
+    - Уточнены требования к формату ссылок на иконки.
+servers:
+  - url: https://api.cliometrics.internal/v1
+    description: Production server
+
+paths:
+  /traits/{leader_uuid}:
+    get:
+      summary: Получить активные трейты лидера на конкретную дату
+      operationId: getLeaderTraits
+      tags:
+        - Traits
+      parameters:
+        - name: leader_uuid
+          in: path
+          required: true
+          description: Уникальный идентификатор лидера (UUID)
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: current_date
+          in: query
+          required: false
+          description: Текущая игровая дата (ГГГГ-ММ-ДД). Необходима для проверки сезонных и временных трейтов.
+          schema:
+            type: string
+            format: date
+            example: "1941-06-22"
+      responses:
+        '200':
+          description: Успешный возврат списка трейтов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderTraitsResponse'
+        '400':
+          description: Неверный формат UUID или даты
+
+  /traits/bulk:
+    post:
+      summary: Массовое получение трейтов для списка лидеров
+      operationId: getBulkTraits
+      tags:
+        - Traits
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - leader_uuids
+              properties:
+                leader_uuids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  example: ["550e8400-e29b-41d4-a716-446655440000", "671e8400-e29b-41d4-a716-446655440001"]
+                current_date:
+                  type: string
+                  format: date
+                  example: "1941-06-22"
+      responses:
+        '200':
+          description: Словарь результатов, где ключ — UUID лидера
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/LeaderTraitsResponse'
+
+components:
+  schemas:
+    LeaderTraitsResponse:
+      type: object
+      properties:
+        leader_uuid:
+          type: string
+          format: uuid
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+
+    Trait:
+      type: object
+      required:
+        - name
+        - availability
+      properties:
+        name:
+          type: string
+          example: "Great Purge Survivor"
+        description:
+          type: string
+          example: "Increases political stability but lowers army morale."
+        icon_url:
+          type: string
+          format: uri
+          description: Полный абсолютный URL к ассету на CDN.
+          example: "https://cdn.internal/icons/icon_purge_skull.png"
+        availability:
+          type: object
+          description: Статус доступности трейта для игрока
+          properties:
+            is_active:
+              type: boolean
