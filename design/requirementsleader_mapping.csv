@@ -3,4 +3,7 @@ json_name,technical_slug,legacy_id
 "sov_trotsky",sov_trotsky,1047
 "Winston Churchill",eng_churchill,1048
 "USA_FDR",usa_fdr,1049
+json_name,technical_slug,legacy_id,internal_uuid
+"Joseph Stalin",sov_stalin,1046,550e8400-e29b-41d4-a716-446655440000
+"sov_trotsky",sov_trotsky,1047,671e8400-e29b-41d4-a716-446655440001
 "Hirohito",jap_hirohito,1050
