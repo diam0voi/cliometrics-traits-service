@@ -1,13 +1,13 @@
 openapi: 3.0.3
 info:
   title: Traits Microservice API
-  version: 1.2.0
+  version: 1.3.0
   description: |
-    API системы динамических параметров лидеров. 
-    **Обновления v1.2.0:**
-    - Переход с `year` на `current_date` (format: date) для точности уровня HoI4.
-    - Поле `active` заменено на объект `availability` для информирования фронтенда о причинах блокировки трейта.
-    - Уточнены требования к формату ссылок на иконки.
+    API системы трейтов лидеров. 
+    **Архитектурное решение:** 
+    1. Первичным идентификатором является `leader_uuid`.
+    2. Для обратной совместимости с iOS v2.4 в ответе передается `legacy_leader_id`. 
+    3. Использование `legacy_leader_id` в качестве ключа в новых запросах запрещено.
 servers:
   - url: https://api.cliometrics.internal/v1
     description: Production server
@@ -15,7 +15,7 @@ servers:
 paths:
   /traits/{leader_uuid}:
     get:
-      summary: Получить активные трейты лидера на конкретную дату
+      summary: Получить активные трейты лидера
       operationId: getLeaderTraits
       tags:
         - Traits
@@ -31,24 +31,24 @@ paths:
         - name: current_date
           in: query
           required: false
-          description: Текущая игровая дата (ГГГГ-ММ-ДД). Необходима для проверки сезонных и временных трейтов.
+          description: Текущая игровая дата (ГГГГ-ММ-ДД) для обсчета сезонных эффектов (HoI4 style).
           schema:
             type: string
             format: date
             example: "1941-06-22"
       responses:
         '200':
-          description: Успешный возврат списка трейтов
+          description: Успешный возврат данных
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LeaderTraitsResponse'
         '400':
-          description: Неверный формат UUID или даты
+          description: Ошибка валидации UUID или даты
 
   /traits/bulk:
     post:
-      summary: Массовое получение трейтов для списка лидеров
+      summary: Массовый запрос трейтов
       operationId: getBulkTraits
       tags:
         - Traits
@@ -73,7 +73,7 @@ paths:
                   example: "1941-06-22"
       responses:
         '200':
-          description: Словарь результатов, где ключ — UUID лидера
+          description: Словарь результатов, где ключи — UUID лидеров
           content:
             application/json:
               schema:
@@ -85,10 +85,17 @@ components:
   schemas:
     LeaderTraitsResponse:
       type: object
+      description: Объект ответа с привязкой к идентификаторам
       properties:
         leader_uuid:
           type: string
           format: uuid
+          description: Основной системный идентификатор
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        legacy_leader_id:
+          type: string
+          description: "Костыль для маппинга с Legacy Core (iOS v2.4). НЕ ИСПОЛЬЗОВАТЬ как PK."
+          example: "1046"
         traits:
           type: array
           items:
@@ -113,7 +120,18 @@ components:
           example: "https://cdn.internal/icons/icon_purge_skull.png"
         availability:
           type: object
-          description: Статус доступности трейта для игрока
           properties:
             is_active:
               type: boolean
+              example: true
+            reason:
+              type: string
+              description: Пояснение статуса активности (например, 'Active only in winter')
+              example: "Active only between 1936-01-01 and 1939-12-31"
+        effect_modifiers:
+          type: object
+          additionalProperties:
+            type: number
+          example:
+            stability: 0.15
+            army_org: -0.1
